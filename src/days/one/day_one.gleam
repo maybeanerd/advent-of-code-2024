@@ -19,16 +19,16 @@ fn add(a: Int, b: Int) -> Int {
 }
 
 fn loop_through_list_difference(
-  left_list: List(Int),
-  right_list: List(Int),
-  accumulator: Int,
+  starting_value accumulator: Int,
+  left_list left_list: List(Int),
+  right_list right_list: List(Int),
 ) -> Int {
   case left_list, right_list {
     [first_item_left, ..rest_left], [first_item_right, ..rest_right] ->
       first_item_left - first_item_right
       |> int.absolute_value
       |> add(accumulator)
-      |> loop_through_list_difference(rest_left, rest_right, _)
+      |> loop_through_list_difference(rest_left, rest_right)
     _, _ -> accumulator
   }
 }
@@ -38,7 +38,11 @@ fn compare_two_lists(left_list: List(Int), right_list: List(Int)) {
   let sorted_right_list = list.sort(right_list, sort_list_items)
 
   let difference =
-    loop_through_list_difference(sorted_left_list, sorted_right_list, 0)
+    loop_through_list_difference(
+      sorted_left_list,
+      sorted_right_list,
+      starting_value: 0,
+    )
 
   io.debug("day one: " <> int.to_string(difference))
 }

@@ -1,3 +1,4 @@
+import gleam/int
 import gleam/io
 import gleam/list
 import gleam/order
@@ -13,14 +14,30 @@ fn sort_list_items(a: Int, b: Int) {
   }
 }
 
+fn loop_through_list_difference(
+  left_list: List(Int),
+  right_list: List(Int),
+  accumulator: Int,
+) -> Int {
+  case left_list, right_list {
+    [first_item_left, ..rest_left], [first_item_right, ..rest_right] ->
+      loop_through_list_difference(
+        rest_left,
+        rest_right,
+        accumulator + int.absolute_value(first_item_left - first_item_right),
+      )
+    _, _ -> accumulator
+  }
+}
+
 fn compare_two_lists(left_list: List(Int), right_list: List(Int)) {
   let sorted_left_list = list.sort(left_list, sort_list_items)
   let sorted_right_list = list.sort(right_list, sort_list_items)
 
-  io.debug("Left list: ")
-  io.debug(sorted_left_list)
-  io.debug("Right list: ")
-  io.debug(sorted_right_list)
+  let difference =
+    loop_through_list_difference(sorted_left_list, sorted_right_list, 0)
+
+  io.debug("day one: " <> int.to_string(difference))
 }
 
 pub fn main() {

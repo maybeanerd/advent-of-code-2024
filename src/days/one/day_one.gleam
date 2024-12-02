@@ -44,7 +44,7 @@ fn compare_two_lists(left_list: List(Int), right_list: List(Int)) {
       starting_value: 0,
     )
 
-  io.debug("day one: " <> int.to_string(difference))
+  io.debug("Day One: " <> int.to_string(difference))
 }
 
 pub fn main() {

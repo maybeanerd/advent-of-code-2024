@@ -1,15 +1,56 @@
+import gleam/int
 import gleam/io
+import gleam/list
+
+type Direction {
+  None
+  Increment
+  Decrement
+}
 
 fn check_report_validity(
   report: List(Int),
-  previous_value previous_value: Int,
-  is_valid is_valid: Bool,
+  direction direction: Direction,
 ) -> Bool {
-  todo
+  case report, report {
+    [previous_value, current_value, ..], [_, ..rest] -> {
+      let difference = int.absolute_value(previous_value - current_value)
+      case difference < 1, difference > 3 {
+        True, _ | _, True -> False
+        _, _ -> {
+          let new_direction = case current_value > previous_value {
+            True -> Increment
+            False -> Decrement
+          }
+          case new_direction == direction, direction {
+            True, _ -> check_report_validity(rest, new_direction)
+            False, None -> check_report_validity(rest, new_direction)
+            False, _ -> False
+          }
+        }
+      }
+    }
+    [_], [_] -> True
+    [], [] -> True
+    _, _ -> panic as "Invalid report"
+  }
+}
+
+fn start_checking_report_validity(report: List(Int)) {
+  check_report_validity(report, None)
+}
+
+fn is_true(value: Bool) -> Bool {
+  value
 }
 
 pub fn main() {
-  io.debug("Day Two:")
+  let amount_valid =
+    input
+    |> list.map(start_checking_report_validity)
+    |> list.count(is_true)
+
+  io.debug("Day Two: " <> int.to_string(amount_valid))
 }
 
 const input = [

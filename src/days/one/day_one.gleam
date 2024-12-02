@@ -14,6 +14,10 @@ fn sort_list_items(a: Int, b: Int) {
   }
 }
 
+fn add(a: Int, b: Int) -> Int {
+  a + b
+}
+
 fn loop_through_list_difference(
   left_list: List(Int),
   right_list: List(Int),
@@ -21,11 +25,10 @@ fn loop_through_list_difference(
 ) -> Int {
   case left_list, right_list {
     [first_item_left, ..rest_left], [first_item_right, ..rest_right] ->
-      loop_through_list_difference(
-        rest_left,
-        rest_right,
-        accumulator + int.absolute_value(first_item_left - first_item_right),
-      )
+      first_item_left - first_item_right
+      |> int.absolute_value
+      |> add(accumulator)
+      |> loop_through_list_difference(rest_left, rest_right, _)
     _, _ -> accumulator
   }
 }

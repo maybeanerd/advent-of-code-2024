@@ -2,13 +2,11 @@ import gleam/io
 import gleam/regexp
 import gleam/result
 
-fn create_regex() {
-  regexp.from_string("mul\\(\\d+\\d?\\d?,\\d+\\d?\\d?\\)")
-  // TODO
-}
-
 pub fn main() {
-  use expression <- result.try(create_regex())
+  let mul_regular_expression =
+    regexp.from_string("mul\\(\\d+\\d?\\d?,\\d+\\d?\\d?\\)")
+
+  use expression <- result.try(mul_regular_expression)
   let solution = regexp.scan(content: example_input, with: expression)
 
   io.debug(solution)

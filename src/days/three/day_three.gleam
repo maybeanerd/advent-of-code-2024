@@ -1,20 +1,60 @@
+import gleam/int
 import gleam/io
+import gleam/list
 import gleam/regexp
 import gleam/result
+
+fn multiply(multipliers: List(Result(Int, Nil)), total: Int) {
+  case multipliers {
+    [multiplier_result, ..rest] -> {
+      use multiplier <- result.try(multiplier_result)
+      multiply(rest, total * multiplier)
+    }
+    [] -> Ok(total)
+  }
+}
+
+fn add(adders: List(Result(Int, Nil)), total: Int) {
+  case adders {
+    [multiplier_result, ..rest] -> {
+      use multiplier <- result.try(multiplier_result)
+      add(rest, total + multiplier)
+    }
+    [] -> Ok(total)
+  }
+}
 
 pub fn main() {
   let mul_regular_expression =
     regexp.from_string("mul\\(\\d+\\d?\\d?,\\d+\\d?\\d?\\)")
 
-  use expression <- result.try(mul_regular_expression)
-  let solution = regexp.scan(content: example_input, with: expression)
+  let mul_parts_regular_expression = regexp.from_string("\\d+\\d?\\d?")
 
+  use mul_expression <- result.try(mul_regular_expression)
+  use mul_parts_expression <- result.try(mul_parts_regular_expression)
+
+  let multiplications = regexp.scan(content: real_input, with: mul_expression)
+
+  let multiplication_results =
+    list.map(multiplications, fn(match: regexp.Match) {
+      let parts =
+        regexp.scan(content: match.content, with: mul_parts_expression)
+
+      let multipliers =
+        list.map(parts, fn(multiplier_match: regexp.Match) {
+          use multiplier <- result.try(int.parse(multiplier_match.content))
+
+          Ok(multiplier)
+        })
+      multiply(multipliers, 1)
+    })
+
+  let solution = add(multiplication_results, 0)
+  io.debug("Day Three: ")
   io.debug(solution)
-  io.debug("Day Three: " <> "TODO")
-  Ok("cool")
-}
 
-const example_input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
+  Ok("")
+}
 
 const real_input = ")mul(241,173)where()how()mul(978,869);mul(768,14)/how() '?select()]{><mul(919,141)}when()*mul(917,743)how()what()/who()from()@+-%mul(480,547)mul(787,859)^how()}mul(831,935)from() when();#from()<mul(412,254)&-''select()];mul(882,793)from()how()where()>when()mul(576,815)how()/{when()}/ mul(872,894)~<}> mul(893,419)mul(777,637))from()><}mul(976,384)select()who(),mul(152,26)?mul(345,409) ;{!@where()(mul(520,140)'&/?mul(587,697)why()mul(724,433)$why(497,513)};?*^how()[mul(616,904)who()+why()<where();when()mul(314,689)when(238,283)when()from(903,759)$how()]mul(977,452) <what()&'mul(915,188))] $%?!]'mul(75,280)mul(496,507)why()[{,<%~# &mul(334,91)mul(674,796)}when()@why()where()^mul(974,568)]select()[<)mul(699,339)>what()where()mul(136,788)?]*don't()$?*why()'}~$'mul(820,911)::;<'(select()*-mul(505,633)what()what()''%, %';mul(739,984)?how()!%how()+>(mul(560,40)~/%)-select()>@$mul(745,527)when()];@^{[?mul(238,266)/ where()?~$who()~-from()mul(350,760)where()where()@& -/don't()<$mul(591,538)when()#what()from(),,'what()]mul(567,522)!?!(when()from()]~~<mul(584,847)$)?(mul(610,82)where()~#~mul(710,144)^>%where()from()/' ;mul(834,874)from() ,!;who()when()(select()mul(574,485)$;from()}{?'mul(33,399)>why()!mul(547,850))how()~where()?,when()~!mul(321,474)'why()*who();'mul(265,718)$ &mul(199,69) ^@?who()%}}:mul(779,529)<mul(974,547)<^#$mul(822,46);who() ^>>+mul(246,341)~&]}##<?*&mul(685,763){how()$,]how();)[mul(556,47):),!mul(827,911)why(916,809)who()'{:?do()>:how()-!!@why()#mul(35,66)where()!how())mul(743,939)[*mul(136,711)<what()from()['+from()mul(360,231)who()&#(select(),]when()mul(638,473),[mul(211,118)!select()<who()&why()mul(164,779):+{#[}}&mul(289,779)where()+^#-*mul(383,92)who()what();mul(41,693)'from(577,619)! how()~+]#mul(320,255)@[ !~/^%select()mul(804,788)don't()-who()+?who()<,what()!&mul(10,910)!]select()*select()[%mul(732,549)mul(523,957)when() < what()where()$:mul(864,353)<~where()^what()<mul(6,317)){mul(615,990)]mul(656,651)+>where()@mul(652,980);-<why()/'?from())mul(788,404))where(),<when()mul(191,391)&'{+what()?mul(328,454)mul(634,63)]when()select()&mulwhy()({#mul(445,407)select()where()~$how()'mul(880,930)when()mul(413,832)@~select()(,~mul(733,595)', ] from():/;~mul(642,869)<^when()>mul(268,594,where()why()mul(424,662)!$select(){}why()&why()mul(257$#?$+>mul(126,845)don't()-^who()?>what(868,788)?select()mul(363,480}:*)@$>@^mul(111,344)mul(123,644)<from()how()when()mul(331,631)when(),who() mul(375,124)select(796,869),mul(526,947)#~?mul(133,162);+$:,select(2,358)@where()mul(583,111) @&% *how()who(){mul(992,293)(%do()where():]<where(842,149)mul(613,16)where()mul(142,184)where(820,632)[mul)@where(384,761)mul(704,687)?what(405,659)select()'$,from()>mul(514,48)%{,who(717,281)from()!+$^[don't():+mul(606,311)select()-mul(712,555)<-#!',mul(849,833)$:$}}<)-select()mul(501,605)-[@what()%]^]when()-mul(669,419):mul{from()why()select()<mul(405,588){>;;how()#(-+do()^>how()mul(582,108)how()~*mul(904,270)where()when(),who()<@$:mul(197,673)when()mul(618,773select()(mul(216,294)-[where(967,868)what()how()#from()^[mul(554,287why() why():mul(874,775)how()what(),)what()}!what()-mul(615,953)when()?@?select()+who()mul(876,691)] %}-how(69,941)mul(733,264):-&,$select()</}'mul(149,701)how()&mul(436,520)>mul(185,762)mul(219,904)where()*(+what()mul(924,800)!~$/mul(595,419)??!+don't()select()%)!@{):where()mul(910,173)-)mul(212,855)'mul(244,797)/'mul(178,691)
 select()mul?'^)?;#~+what();mul(562,643)who()who()mul(503,400)when()what();:${mul(52,676)!from()how(900,787)@+mul(247,392)/when()&^!%mul(854,848)>mul(804,925)from()]/how()(when(), where()mul(54,805)[,{mul(480,558)$/mul(133,201)mul(498,570)$where()-[mul(119,843)!mul(787,935)why()}why()!}mul(877,6)>how(588,222)}/%where():from()do()?why()!mul(281,509)why()~how()'who()][select()do()(?when()'&@mul(770,772)#&how(245,622)/?where()why(),mul(925,673)mul(363,811)what()!;when()-*what()mul(98,327)what(){mul,?;&(/what()mul(510,668)]},when()!*;why()mul##do()@!$>;-mul(911,884)- where()>@,-^mul(91,898)&-$why()when()#how()why()who()mul(625,394)*,?what(918,843)mul(228,511)!who()who()/}who()mul(382,993)mul(617,2)#*mul(389,26)<-don't()@?#mul(28,361)&&what()mul(459,703) '}(where()#don't()*<mul(168,981)%-who()mul(996,807)(<mul(971,368)what(){<<from()$'from()@mul(31,790)who(351,906);@${)mul(485,157)}$why():^/<~when(307,325)where()mul(20,253)!what()-,who()~]mul(485,788)<?from()when()'select()[ mul(377,764):*<!- +/'mul(109,59)<select()mul(684,726)%who()why()when()-+*?{&mul(575,181))mul(622,212)];]why()mul(176,849)mul(382,886)> ,from()]^}mul(445,974)[& what(326,203)-mul(997,858)do()^+[@{~>>why()mul(228,632)/where()why(684,844)^/{* mul(800,231)mul(178,527)@]*  ]:?:what()mul(701,296)/;@}@&/mul(360from()},mul(376,787)what()'-what()&/mul(201,892)mul(493,702)([when(){mul(963,62)}from()mul(305,599)}'::$$who();from(860,246)'mul(482,751)>%{>,)/&mul(925,607)>$:)who()*%mul(586,447){mul(57,355)from()mul(572,53who(),-<:]who()]$$mul(971,244)mul(211,405)?-^+)-mul(260,898){?from(299,46)<what()]mul(381,329) ~(what();;~!mul(792,894) mul(667,892),who()where():what(887,492)what(), mul(906,468)who()+&what()how()' #mul(455,637)^#mul(689,351))-]/#;}mul(286,754)#]($%*&*}select()mul(771,501)'how()mul(595,142)&&-?}mul(939,657)'{what()+&]@^!mul(806,265)why()where()why()]>how()?mul(681,651)'why():$:}@$mul(179,561)>where(77,77)!}>>?+)+mul(301,841)$##}~)<how()}:mul(313,991)where()why()'mul(654,11)&$@from()&{}?don't()&+*}mul(303,336)$<?mul(379,354)}why()where()where(794,225)how()why()@}mul(153,569)!<who(771,111)}how()-%?mul(839,798)^ from()#('mul(970,72)(-how()where()(why()^mulhow()/mul(522,787)why()mul(931,27)from()how()>]^what()mul(431,278)why()]when()~ select(603,941)from()&;mul(529,267):where()mul(172,461)?}from()mul(729,860)mul(396,182) mul(107,301)^<[select()mul(225,386)why())&why(736,959)mul(888,578)<-mul(26,139)-'<{}*where()?&select()mul(807,874)from()@+{where();!@mul(547,368),mul(540,328)}mul(71,866)%$mul(10,818)(-mul(278,988)when()(when()^who()where(790,726)~)]mul(609,114)why())mul(501,602)!>mul(903,207/what()where()?mul(51,432)(-]<@!how()mul(555,933)mul(160,806):]mul(585,72)mul(408,504)[^})+!:what()]/mul(323,49),:[from()don't()(+~who()<??&what()[mul(958,256)[{what()^mul(232,22)when()@[ ,who(132,654)$mul(841,201)why()[&&(how():mul(878,429)@[select()from()where()who()mul(899,260)select();(^who()why()mul(449,430)where()]~&^':*mul(700,144)[#[mul(36,161)&^select(),)!:][mul(694,589)$)>-)why(234,852)mul(510,487)who()*how()>?mul(927,241)where()-@,when()from(631,732)mul(299,369);{{~{% mul(971,572)}[+</select()&(~mul(727,942):)what()<who()!+$mul(974,926)when();>>];}@^&mul(273,942):&{- +>mul(825,914)how()where()$%'$select()don't()why()&mul(493,923)

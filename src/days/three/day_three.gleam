@@ -4,24 +4,32 @@ import gleam/list
 import gleam/regexp
 import gleam/result
 
-fn multiply(multipliers: List(Result(Int, Nil)), total: Int) {
+fn multiply_internal(multipliers: List(Result(Int, Nil)), total: Int) {
   case multipliers {
     [multiplier_result, ..rest] -> {
       use multiplier <- result.try(multiplier_result)
-      multiply(rest, total * multiplier)
+      multiply_internal(rest, total * multiplier)
     }
     [] -> Ok(total)
   }
 }
 
-fn add(adders: List(Result(Int, Nil)), total: Int) {
+fn multiply(multipliers: List(Result(Int, Nil))) {
+  multiply_internal(multipliers, 1)
+}
+
+fn add_internal(adders: List(Result(Int, Nil)), total: Int) {
   case adders {
     [multiplier_result, ..rest] -> {
       use multiplier <- result.try(multiplier_result)
-      add(rest, total + multiplier)
+      add_internal(rest, total + multiplier)
     }
     [] -> Ok(total)
   }
+}
+
+fn add(adders: List(Result(Int, Nil))) {
+  add_internal(adders, 0)
 }
 
 pub fn main() {
@@ -46,10 +54,10 @@ pub fn main() {
 
           Ok(multiplier)
         })
-      multiply(multipliers, 1)
+      multiply(multipliers)
     })
 
-  let solution = add(multiplication_results, 0)
+  let solution = add(multiplication_results)
   io.debug("Day Three: ")
   io.debug(solution)
 

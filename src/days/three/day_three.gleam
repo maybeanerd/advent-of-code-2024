@@ -57,8 +57,6 @@ pub fn main() {
       multiply(multipliers)
     })
 
-  let unused_var = "hi"
-
   let solution = add(multiplication_results)
   io.debug("Day Three: ")
   let debug_result = io.debug(solution)

@@ -3,7 +3,7 @@ import gleam/regexp
 import gleam/result
 
 fn create_regex() {
-  regexp.from_string("abc")
+  regexp.from_string("mul\\(\\d+\\d?\\d?,\\d+\\d?\\d?\\)")
   // TODO
 }
 

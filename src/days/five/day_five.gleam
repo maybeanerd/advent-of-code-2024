@@ -6,23 +6,13 @@ fn check_print_validity(
   requirements: List(#(Int, Int)),
   print: List(Int),
 ) -> Bool {
-  io.debug("cleaned requirements")
-  io.debug(requirements)
-
   case print {
     [page, ..rest] -> {
-      io.debug("filtered down requirements")
-      io.debug(requirements)
-      io.debug("page")
-      io.debug(page)
       let failed_requirement =
         list.find(requirements, fn(element) {
           let #(_, value) = element
           value == page
         })
-
-      io.debug("failed requirement?")
-      io.debug(failed_requirement)
 
       case failed_requirement {
         Ok(_) -> False
@@ -31,7 +21,6 @@ fn check_print_validity(
             let #(required_value, _) = value
             required_value != page
           })
-          |> io.debug
           |> check_print_validity(rest)
         }
       }
@@ -44,10 +33,7 @@ fn start_checking_print_validity(
   requirements: List(#(Int, Int)),
   print: List(Int),
 ) -> Bool {
-  io.debug("original requirements")
-  io.debug(requirements)
-
-  // remove all requirements that could never be fulfiled, which is why we wouldnt care about them
+  // remove all requirements that could never be fulfilled, which is why we wouldnt care about them
   list.filter(requirements, fn(requirement) {
     let #(left_value, right_value) = requirement
     list.contains(print, left_value) && list.contains(print, right_value)
@@ -88,9 +74,7 @@ fn calculate_puzzle_sum(
   prints: List(List(Int)),
 ) {
   list.filter(prints, start_checking_print_validity(requirements, _))
-  |> io.debug
   |> list.map(get_middle_page)
-  |> io.debug
   |> add_elements
 }
 

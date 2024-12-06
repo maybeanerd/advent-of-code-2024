@@ -33,22 +33,48 @@ fn loop_through_list_difference(
   }
 }
 
-fn compare_two_lists(left_list: List(Int), right_list: List(Int)) {
+fn calculate_difference(left_list: List(Int), right_list: List(Int)) {
   let sorted_left_list = list.sort(left_list, sort_list_items)
   let sorted_right_list = list.sort(right_list, sort_list_items)
 
-  let difference =
-    loop_through_list_difference(
-      sorted_left_list,
-      sorted_right_list,
-      starting_value: 0,
-    )
+  loop_through_list_difference(
+    sorted_left_list,
+    sorted_right_list,
+    starting_value: 0,
+  )
+}
 
-  io.debug("Day One: " <> int.to_string(difference))
+fn multiply(a: Int, b: Int) {
+  a * b
+}
+
+fn add_internal(adders: List(Int), total: Int) {
+  case adders {
+    [multiplier, ..rest] -> add_internal(rest, total + multiplier)
+    [] -> total
+  }
+}
+
+fn add_elements(adders: List(Int)) {
+  add_internal(adders, 0)
+}
+
+fn calculate_similarity(left_list: List(Int), right_list: List(Int)) -> Int {
+  list.map(left_list, fn(value: Int) {
+    list.count(right_list, fn(comparison_value: Int) {
+      comparison_value == value
+    })
+    |> multiply(value)
+  })
+  |> add_elements
 }
 
 pub fn main() {
-  compare_two_lists(left_list, right_list)
+  let difference = calculate_difference(left_list, right_list)
+  io.debug("Day One: " <> int.to_string(difference))
+
+  let similarity = calculate_similarity(left_list, right_list)
+  io.debug("Day One, part two: " <> int.to_string(similarity))
 }
 
 const left_list = [

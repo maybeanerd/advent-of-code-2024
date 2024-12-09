@@ -32,13 +32,19 @@ fn check_print_validity(
 fn start_checking_print_validity(
   requirements: List(#(Int, Int)),
   print: List(Int),
+  invalid: Bool,
 ) -> Bool {
   // remove all requirements that could never be fulfilled, which is why we wouldnt care about them
-  list.filter(requirements, fn(requirement) {
-    let #(left_value, right_value) = requirement
-    list.contains(print, left_value) && list.contains(print, right_value)
-  })
-  |> check_print_validity(print)
+  let filtered_requirements =
+    list.filter(requirements, fn(requirement) {
+      let #(left_value, right_value) = requirement
+      list.contains(print, left_value) && list.contains(print, right_value)
+    })
+  let is_valid = check_print_validity(filtered_requirements, print)
+  case invalid {
+    True -> !is_valid
+    False -> is_valid
+  }
 }
 
 fn get_middle_page(print: List(Int)) -> Int {
@@ -73,14 +79,35 @@ fn calculate_puzzle_sum(
   requirements: List(#(Int, Int)),
   prints: List(List(Int)),
 ) {
-  list.filter(prints, start_checking_print_validity(requirements, _))
+  list.filter(prints, start_checking_print_validity(requirements, _, False))
+  |> list.map(get_middle_page)
+  |> add_elements
+}
+
+fn correctly_sort_print(
+  requirements: List(#(Int, Int)),
+  print: List(Int),
+) -> List(Int) {
+  // TODO to order all incorrectly ordered ones, write a sort algorithm that uses the requirements to sort? not sure if that'd work
+  todo
+}
+
+fn calculate_puzzle_sum_of_unordered(
+  requirements: List(#(Int, Int)),
+  prints: List(List(Int)),
+) {
+  list.filter(prints, start_checking_print_validity(requirements, _, True))
+  list.map(prints, correctly_sort_print(requirements, _))
   |> list.map(get_middle_page)
   |> add_elements
 }
 
 pub fn main() {
   let solution = calculate_puzzle_sum(input_requirements, input_prints)
+  let solution_two =
+    calculate_puzzle_sum_of_unordered(input_requirements, input_prints)
   io.debug("Day Five: " <> int.to_string(solution))
+  io.debug("Day Five, Part Two: " <> int.to_string(solution_two))
 }
 
 const input_prints = [

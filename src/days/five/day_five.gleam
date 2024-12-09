@@ -88,7 +88,7 @@ fn correctly_sort_print(
   requirements: List(#(Int, Int)),
   print: List(Int),
 ) -> List(Int) {
-  // TODO to order all incorrectly ordered ones, write a sort algorithm that uses the requirements to sort? not sure if that'd work
+  // TODO switch places of all requirements that are in incorrect order, then run until none are in incorrect order?
   todo
 }
 
